@@ -1,0 +1,57 @@
+#image-hover-preview {
+    position: fixed;
+    z-index: 2147483647;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.2s ease-in-out;
+    border-radius: 8px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+    background: #ffffff;
+    border: 2px solid #e0e0e0;
+    max-width: 80vw;
+    max-height: 80vh;
+    overflow: hidden;
+    backdrop-filter: blur(2px);
+}
+
+#image-hover-preview img {
+    display: block;
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+    border-radius: 6px;
+}
+
+#image-hover-preview.loading {
+    background: #f5f5f5;
+    min-width: 100px;
+    min-height: 100px;
+}
+
+#image-hover-preview.loading::before {
+    content: "Loading...";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #666;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-size: 14px;
+}
+
+@media (prefers-color-scheme: dark) {
+    #image-hover-preview {
+        background: #2d2d2d;
+        border-color: #555;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6);
+    }
+    
+    #image-hover-preview.loading {
+        background: #3a3a3a;
+    }
+    
+    #image-hover-preview.loading::before {
+        color: #ccc;
+    }
+}
