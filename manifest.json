@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Image Hover Preview",
   "version": "1.0.0",
-  "description": "显示图片悬停预览效果，支持任意网页",
+  "description": "Show enlarged image previews on hover for any webpage",
   
   "icons": {
     "16": "icons/icon16.png",
@@ -22,7 +22,7 @@
       "48": "icons/icon48.png",
       "128": "icons/icon128.png"
     },
-    "default_title": "图片预览开关"
+    "default_title": "Image Preview Toggle"
   },
   
   "content_scripts": [

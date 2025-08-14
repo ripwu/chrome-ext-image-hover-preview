@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     const statusElement = document.getElementById('status');
     
     try {
-        // 获取当前标签页信息
+        // Get current tab information
         const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
         const currentTab = tabs[0];
         const url = new URL(currentTab.url);
@@ -12,30 +12,30 @@ document.addEventListener('DOMContentLoaded', async function() {
         
         currentSiteElement.textContent = hostname;
         
-        // 从存储中获取当前网站的禁用状态
+        // Get current site's disabled status from storage
         const result = await chrome.storage.local.get([`disabled_${hostname}`]);
         const isDisabled = result[`disabled_${hostname}`] || false;
         
-        // 设置开关状态（注意：这里是"启用"开关，所以要取反）
+        // Set toggle state (note: this is an "enable" toggle, so we need to invert)
         const isEnabled = !isDisabled;
         updateToggleState(isEnabled);
         updateStatus(isEnabled);
         
-        // 开关点击事件
+        // Toggle click event
         toggle.addEventListener('click', async function() {
             const currentState = toggle.classList.contains('active');
             const newState = !currentState;
             
-            // 更新UI
+            // Update UI
             updateToggleState(newState);
             updateStatus(newState);
             
-            // 保存到存储（保存的是禁用状态）
+            // Save to storage (saving disabled state)
             await chrome.storage.local.set({
                 [`disabled_${hostname}`]: !newState
             });
             
-            // 通知content script状态变更
+            // Notify content script of state change
             try {
                 await chrome.tabs.sendMessage(currentTab.id, {
                     action: 'togglePreview',
@@ -43,16 +43,16 @@ document.addEventListener('DOMContentLoaded', async function() {
                     hostname: hostname
                 });
             } catch (error) {
-                console.log('无法发送消息到content script，可能页面需要刷新');
-                statusElement.textContent = '设置已保存，刷新页面后生效';
+                console.log('Unable to send message to content script, page may need refresh');
+                statusElement.textContent = 'Settings saved, refresh page to take effect';
                 statusElement.style.color = '#ff6b35';
             }
         });
         
     } catch (error) {
         console.error('Error in popup:', error);
-        currentSiteElement.textContent = '无法获取网站信息';
-        statusElement.textContent = '发生错误，请重试';
+        currentSiteElement.textContent = 'Unable to get site information';
+        statusElement.textContent = 'Error occurred, please try again';
         statusElement.style.color = '#ff6b35';
     }
     
@@ -66,10 +66,10 @@ document.addEventListener('DOMContentLoaded', async function() {
     
     function updateStatus(enabled) {
         if (enabled) {
-            statusElement.textContent = '预览功能已启用';
+            statusElement.textContent = 'Preview enabled';
             statusElement.style.color = '#4CAF50';
         } else {
-            statusElement.textContent = '预览功能已禁用';
+            statusElement.textContent = 'Preview disabled';
             statusElement.style.color = '#ff6b35';
         }
     }

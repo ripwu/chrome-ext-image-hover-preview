@@ -5,9 +5,9 @@
     let currentImage = null;
     let hoverTimer = null;
     const HOVER_DELAY = 150;
-    let isExtensionEnabled = true; // 扩展是否在当前域名启用
+    let isExtensionEnabled = true; // Whether extension is enabled for current domain
     
-    // 检查当前域名是否被禁用
+    // Check if current domain is disabled
     async function checkIfEnabled() {
         try {
             const hostname = window.location.hostname;
@@ -20,13 +20,13 @@
         }
     }
     
-    // 监听来自popup的消息
+    // Listen to messages from popup
     chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
         if (request.action === 'togglePreview') {
             isExtensionEnabled = request.enabled;
             console.log('ImageHover: Received toggle message, enabled:', isExtensionEnabled);
             
-            // 如果被禁用，隐藏当前预览
+            // If disabled, hide current preview
             if (!isExtensionEnabled) {
                 hidePreview();
             }
@@ -74,34 +74,34 @@
     
     function getImageSrc(element) {
         if (element.tagName === 'IMG') {
-            // 优先使用 data-src (懒加载)
+            // Prefer data-src (lazy loading)
             let src = element.dataset.src || element.getAttribute('data-src');
             if (!src) {
                 src = element.src;
             }
             
-            // 过滤占位符图片
+            // Filter out placeholder images
             if (src && (
                 src.startsWith('data:image/gif;base64,R0lGOD') ||
                 src.startsWith('data:image/svg+xml') ||
                 src === 'data:,' ||
                 src.includes('placeholder')
             )) {
-                // 尝试其他懒加载属性
+                // Try other lazy loading attributes
                 src = element.dataset.lazySrc || 
                       element.dataset.original || 
                       element.getAttribute('data-lazy-src') ||
                       element.getAttribute('data-original');
             }
             
-            // 处理相对路径URL
+            // Handle relative path URLs
             if (src && !src.startsWith('http') && !src.startsWith('data:')) {
                 if (src.startsWith('//')) {
                     src = window.location.protocol + src;
                 } else if (src.startsWith('/')) {
                     src = window.location.origin + src;
                 } else {
-                    // 相对路径，基于当前页面URL
+                    // Relative path, based on current page URL
                     const baseUrl = window.location.href.substring(0, window.location.href.lastIndexOf('/') + 1);
                     src = baseUrl + src;
                 }
@@ -126,11 +126,11 @@
         const maxWidth = Math.min(imageWidth, viewportWidth * 0.8);
         const maxHeight = Math.min(imageHeight, viewportHeight * 0.8);
         
-        // 对于 fixed 定位，直接使用视口坐标，不需要加滚动偏移
+        // For fixed positioning, use viewport coordinates directly, no need to add scroll offset
         let left = mouseX + 15;
         let top = mouseY + 15;
         
-        // 确保预览框不超出视口边界
+        // Ensure preview doesn't exceed viewport boundaries
         if (left + maxWidth > viewportWidth - 20) {
             left = mouseX - maxWidth - 15;
         }
@@ -139,7 +139,7 @@
             top = mouseY - maxHeight - 15;
         }
         
-        // 确保不会超出视口左上角
+        // Ensure it doesn't exceed viewport top-left corner
         left = Math.max(10, left);
         top = Math.max(10, top);
         
@@ -147,7 +147,7 @@
     }
     
     function showPreview(element, mouseEvent) {
-        // 检查扩展是否在当前域名启用
+        // Check if extension is enabled for current domain
         if (!isExtensionEnabled) {
             console.log('ImageHover: Extension is disabled for this domain');
             return;
@@ -155,7 +155,7 @@
         
         const imgSrc = getImageSrc(element);
         
-        // 调试信息 (可以通过控制台查看)
+        // Debug information (can be viewed in console)
         console.log('ImageHover Debug:', {
             element: element,
             tagName: element.tagName,
@@ -173,7 +173,7 @@
             return;
         }
         
-        // 跳过无效的图片URL
+        // Skip invalid image URLs
         if (imgSrc.startsWith('data:image/gif;base64,R0lGOD') || 
             imgSrc === 'data:,' || 
             imgSrc.includes('placeholder')) {
@@ -181,14 +181,14 @@
             return;
         }
         
-        // 检查图片的显示尺寸，如果已经足够大则不需要预览
+        // Check image display size, skip preview if already large enough
         if (element.tagName === 'IMG' && element.naturalWidth > 0 && element.naturalHeight > 0) {
             const displayWidth = element.offsetWidth || element.width;
             const displayHeight = element.offsetHeight || element.height;
             const naturalWidth = element.naturalWidth;
             const naturalHeight = element.naturalHeight;
             
-            // 如果显示尺寸已经达到原始尺寸的90%以上，则不显示预览
+            // Don't show preview if display size is already 90%+ of natural size
             if (displayWidth >= naturalWidth * 0.9 && displayHeight >= naturalHeight * 0.9) {
                 console.log('ImageHover: Image display size is already large enough', {
                     displaySize: { width: displayWidth, height: displayHeight },
@@ -307,7 +307,7 @@
     
     function isValidImageElement(element) {
         if (element.tagName === 'IMG') {
-            // 检查是否有真实图片源
+            // Check if there's a real image source
             const src = getImageSrc(element);
             return src && 
                    !src.startsWith('data:image/svg') && 
@@ -320,7 +320,7 @@
     }
     
     async function initializeExtension() {
-        // 检查当前域名的启用状态
+        // Check current domain's enabled status
         await checkIfEnabled();
         
         document.addEventListener('mouseover', function(event) {
