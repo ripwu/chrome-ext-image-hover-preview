@@ -5,6 +5,35 @@
     let currentImage = null;
     let hoverTimer = null;
     const HOVER_DELAY = 150;
+    let isExtensionEnabled = true; // 扩展是否在当前域名启用
+    
+    // 检查当前域名是否被禁用
+    async function checkIfEnabled() {
+        try {
+            const hostname = window.location.hostname;
+            const result = await chrome.storage.local.get([`disabled_${hostname}`]);
+            isExtensionEnabled = !result[`disabled_${hostname}`];
+            console.log('ImageHover: Extension enabled status for', hostname, ':', isExtensionEnabled);
+        } catch (error) {
+            console.log('ImageHover: Could not check storage, defaulting to enabled');
+            isExtensionEnabled = true;
+        }
+    }
+    
+    // 监听来自popup的消息
+    chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+        if (request.action === 'togglePreview') {
+            isExtensionEnabled = request.enabled;
+            console.log('ImageHover: Received toggle message, enabled:', isExtensionEnabled);
+            
+            // 如果被禁用，隐藏当前预览
+            if (!isExtensionEnabled) {
+                hidePreview();
+            }
+            
+            sendResponse({ success: true });
+        }
+    });
     
     function createOverlay() {
         if (overlay) return overlay;
@@ -118,6 +147,12 @@
     }
     
     function showPreview(element, mouseEvent) {
+        // 检查扩展是否在当前域名启用
+        if (!isExtensionEnabled) {
+            console.log('ImageHover: Extension is disabled for this domain');
+            return;
+        }
+        
         const imgSrc = getImageSrc(element);
         
         // 调试信息 (可以通过控制台查看)
@@ -146,11 +181,22 @@
             return;
         }
         
-        // 如果是相同的src且不需要放大，跳过
-        if (element.tagName === 'IMG' && imgSrc === element.src && 
-            element.naturalWidth > 0 && element.naturalWidth <= element.width) {
-            console.log('ImageHover: Image does not need enlargement');
-            return;
+        // 检查图片的显示尺寸，如果已经足够大则不需要预览
+        if (element.tagName === 'IMG' && element.naturalWidth > 0 && element.naturalHeight > 0) {
+            const displayWidth = element.offsetWidth || element.width;
+            const displayHeight = element.offsetHeight || element.height;
+            const naturalWidth = element.naturalWidth;
+            const naturalHeight = element.naturalHeight;
+            
+            // 如果显示尺寸已经达到原始尺寸的90%以上，则不显示预览
+            if (displayWidth >= naturalWidth * 0.9 && displayHeight >= naturalHeight * 0.9) {
+                console.log('ImageHover: Image display size is already large enough', {
+                    displaySize: { width: displayWidth, height: displayHeight },
+                    naturalSize: { width: naturalWidth, height: naturalHeight },
+                    ratio: { width: displayWidth / naturalWidth, height: displayHeight / naturalHeight }
+                });
+                return;
+            }
         }
         
         const overlay = createOverlay();
@@ -168,12 +214,6 @@
             const naturalWidth = this.naturalWidth;
             const naturalHeight = this.naturalHeight;
             
-            // 只有当原图明显不比显示的大时才跳过
-            if (naturalWidth <= element.width * 1.1 && naturalHeight <= element.height * 1.1) {
-                console.log('ImageHover: Image not significantly larger than original, hiding preview');
-                hidePreview();
-                return;
-            }
             
             const position = calculatePosition(
                 mouseEvent.clientX,
@@ -279,7 +319,10 @@
         return bgImage && bgImage !== 'none' && !bgImage.includes('data:image/svg');
     }
     
-    function initializeExtension() {
+    async function initializeExtension() {
+        // 检查当前域名的启用状态
+        await checkIfEnabled();
+        
         document.addEventListener('mouseover', function(event) {
             if (isValidImageElement(event.target)) {
                 handleMouseEnter(event);

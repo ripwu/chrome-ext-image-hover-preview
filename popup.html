@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <style>
+        body {
+            width: 220px;
+            padding: 15px;
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-size: 14px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 15px;
+            font-weight: 500;
+            color: #333;
+        }
+        
+        .toggle-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 0;
+        }
+        
+        .toggle-label {
+            flex: 1;
+            color: #555;
+        }
+        
+        .toggle-switch {
+            position: relative;
+            width: 50px;
+            height: 24px;
+            background: #ccc;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .toggle-switch.active {
+            background: #4CAF50;
+        }
+        
+        .toggle-slider {
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: 50%;
+            transition: transform 0.3s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .toggle-switch.active .toggle-slider {
+            transform: translateX(26px);
+        }
+        
+        .current-site {
+            margin-top: 10px;
+            padding: 8px;
+            background: #f5f5f5;
+            border-radius: 4px;
+            font-size: 12px;
+            color: #666;
+            word-break: break-all;
+        }
+        
+        .status {
+            text-align: center;
+            margin-top: 10px;
+            font-size: 12px;
+            color: #888;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">图片悬停预览</div>
+    
+    <div class="toggle-container">
+        <div class="toggle-label">在此网站启用</div>
+        <div class="toggle-switch" id="toggle">
+            <div class="toggle-slider"></div>
+        </div>
+    </div>
+    
+    <div class="current-site" id="currentSite">
+        正在获取网站信息...
+    </div>
+    
+    <div class="status" id="status">
+        点击开关来启用或禁用预览功能
+    </div>
+    
+    <script src="popup.js"></script>
+</body>
+</html>
