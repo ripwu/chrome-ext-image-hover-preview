@@ -1,6 +1,19 @@
 # Image Hover Preview
 
+[![GitHub release](https://img.shields.io/github/v/release/ripwu/chrome-ext-image-hover-preview)](https://github.com/ripwu/chrome-ext-image-hover-preview/releases)
+[![Chrome Web Store](https://img.shields.io/chrome-web-store/v/YOUR_EXTENSION_ID)](https://chrome.google.com/webstore/detail/YOUR_EXTENSION_ID)
+[![License](https://img.shields.io/github/license/ripwu/chrome-ext-image-hover-preview)](https://github.com/ripwu/chrome-ext-image-hover-preview/blob/main/LICENSE)
+[![GitHub stars](https://img.shields.io/github/stars/ripwu/chrome-ext-image-hover-preview)](https://github.com/ripwu/chrome-ext-image-hover-preview/stargazers)
+
 A Chrome browser extension that provides image hover preview functionality for any webpage. When hovering over images, it automatically displays an enlarged preview of the image.
+
+## 🚀 Quick Install
+
+**From Chrome Web Store** (Recommended):
+- [Install from Chrome Web Store](https://chrome.google.com/webstore/detail/YOUR_EXTENSION_ID) 
+
+**From Source**:
+- Follow the [Developer Mode Installation](#developer-mode-installation) instructions below
 
 ## Features
 
@@ -121,7 +134,7 @@ This extension only uses the following permissions:
 - `storage` - Stores user's per-site enable/disable preference settings
 - No need to access user data or send network requests
 
-## Contributing
+## 🤝 Contributing
 
 Welcome to submit Issues and Pull Requests!
 
@@ -130,6 +143,21 @@ Welcome to submit Issues and Pull Requests!
 3. Commit changes (`git commit -m 'Add amazing feature'`)
 4. Push to branch (`git push origin feature/amazing-feature`)
 5. Create Pull Request
+
+## 📦 Chrome Web Store Publication
+
+This extension is available on the Chrome Web Store. If you encounter any issues or have suggestions:
+
+- **Report bugs**: [GitHub Issues](https://github.com/ripwu/chrome-ext-image-hover-preview/issues)
+- **Request features**: [Feature Requests](https://github.com/ripwu/chrome-ext-image-hover-preview/issues/new?template=feature_request.md)
+- **Chrome Web Store**: [Rate and Review](https://chrome.google.com/webstore/detail/YOUR_EXTENSION_ID)
+
+## 🔗 Links
+
+- **GitHub Repository**: https://github.com/ripwu/chrome-ext-image-hover-preview
+- **Chrome Web Store**: https://chrome.google.com/webstore/detail/YOUR_EXTENSION_ID
+- **Issues**: https://github.com/ripwu/chrome-ext-image-hover-preview/issues
+- **Releases**: https://github.com/ripwu/chrome-ext-image-hover-preview/releases
 
 ## License
 
