@@ -158,6 +158,7 @@ This extension is available on the Chrome Web Store. If you encounter any issues
 - **Chrome Web Store**: https://chrome.google.com/webstore/detail/YOUR_EXTENSION_ID
 - **Issues**: https://github.com/ripwu/chrome-ext-image-hover-preview/issues
 - **Releases**: https://github.com/ripwu/chrome-ext-image-hover-preview/releases
+- **Privacy Policy**: [PRIVACY_POLICY.md](PRIVACY_POLICY.md)
 
 ## License
 
