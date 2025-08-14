@@ -10,19 +10,23 @@ This is a Chrome browser extension that provides image hover preview functionali
 
 ### Core Components
 
-- **manifest.json**: Chrome extension manifest (v3) defining permissions, content scripts, icons, and resources
+- **manifest.json**: Chrome extension manifest (v3) defining permissions, content scripts, popup, and resources
 - **content/content.js**: Main extension logic implementing image hover detection and preview functionality
 - **content/content.css**: Styling for the preview overlay with dark mode support
+- **popup/popup.html**: Extension popup interface for per-site toggle control
+- **popup/popup.js**: Popup functionality handling user preferences and Chrome storage
 - **icons/**: Directory containing extension icons (16x16, 48x48, 128x128 pixels)
 
 ### Key Functionality
 
 The extension works by:
 1. Injecting content script into all web pages (`<all_urls>`)
-2. Monitoring mouse events (`mouseover`, `mouseout`, `mousemove`) on image elements
-3. Creating a fixed-position overlay for image previews
-4. Handling various image source formats (lazy-loaded images, background images, relative URLs)
-5. Calculating optimal positioning to keep previews within viewport boundaries
+2. Providing a popup interface for users to enable/disable functionality per website
+3. Monitoring mouse events (`mouseover`, `mouseout`, `mousemove`) on image elements
+4. Creating a fixed-position overlay for image previews
+5. Handling various image source formats (lazy-loaded images, background images, relative URLs)
+6. Calculating optimal positioning to keep previews within viewport boundaries
+7. Storing user preferences per domain using Chrome storage API
 
 ### Image Source Detection
 
@@ -36,9 +40,12 @@ The extension handles multiple image source scenarios:
 ### Technical Implementation
 
 - Uses MutationObserver to handle dynamically added content
-- Implements hover delay (300ms) to prevent accidental triggers
+- Implements hover delay (150ms) to prevent accidental triggers
 - Calculates preview positioning based on mouse coordinates and viewport bounds
 - Provides loading states and error handling for image loading
+- Per-domain enable/disable functionality with Chrome storage persistence
+- Runtime messaging between popup and content scripts for real-time updates
+- Intelligent image size checking to avoid unnecessary previews for already large images
 - Includes extensive console logging for debugging
 
 ## Development
@@ -60,9 +67,11 @@ This is a vanilla JavaScript Chrome extension with no build system, package.json
 
 - **content/content.js:48-91**: `getImageSrc()` function - handles image source detection and URL resolution
 - **content/content.js:93-118**: `calculatePosition()` function - manages preview positioning logic
-- **content/content.js:120-213**: `showPreview()` function - core preview display logic
-- **content/content.js:268-280**: `isValidImageElement()` function - determines which elements should trigger previews
+- **content/content.js:147-213**: `showPreview()` function - core preview display logic with domain checking
+- **content/content.js:319-329**: `isValidImageElement()` function - determines which elements should trigger previews
 - **content/content.css:43-57**: Dark mode styles using `prefers-color-scheme`
+- **popup/popup.html**: UI structure for the extension popup interface
+- **popup/popup.js**: Popup logic for toggle functionality and storage management
 - **icons/**: Replace placeholder PNG files with actual extension icons
 
 ## Directory Structure
@@ -77,5 +86,9 @@ chrome-ext-image-hover-preview/
 ├── content/               # Content script files
 │   ├── content.js         # Main functionality logic
 │   └── content.css        # Preview overlay styling
-└── CLAUDE.md              # This documentation file
+├── popup/                 # Extension popup interface
+│   ├── popup.html         # Popup UI structure
+│   └── popup.js           # Popup functionality and logic
+├── CLAUDE.md              # This documentation file
+└── README.md              # Project README
 ```
