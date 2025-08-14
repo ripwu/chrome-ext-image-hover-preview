@@ -4,7 +4,7 @@
     let overlay = null;
     let currentImage = null;
     let hoverTimer = null;
-    const HOVER_DELAY = 300;
+    const HOVER_DELAY = 150;
     
     function createOverlay() {
         if (overlay) return overlay;
