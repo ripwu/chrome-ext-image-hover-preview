@@ -25,6 +25,7 @@ A Chrome browser extension that provides image hover preview functionality for a
 - 🚀 **Dynamic Content Support** - Uses MutationObserver to monitor newly added image elements
 - 🎨 **Elegant Transition Effects** - Smooth fade-in and fade-out animations
 - 🎛️ **Per-Site Control** - Can enable or disable functionality for each website individually
+- 📏 **Customizable Preview Size** - Adjust preview size from 20% to 100% of viewport with slider control
 - 💾 **Settings Persistence** - User preference settings are automatically saved
 
 ## Installation
@@ -51,7 +52,11 @@ After installation, the extension will automatically work on all web pages:
 2. **Control Settings**:
    - Click the extension icon in the browser toolbar
    - Use the toggle to enable or disable functionality for the current website
-   - Settings are automatically saved and take effect on next visit
+   - **Customize Preview Size**:
+     - Drag the slider to adjust preview size (20% - 100% of viewport)
+     - Or manually input a custom percentage value
+     - Size settings apply globally across all websites
+   - Settings are automatically saved and take effect immediately
 
 ## Technical Implementation
 
@@ -114,9 +119,12 @@ console.log('ImageHover Debug:', {
 
 ### Configuration Modification
 
-You can adjust the following parameters in `content/content.js`:
+You can adjust the following parameters in `popup/popup.js`:
 
 ```javascript
+const MIN_SIZE = 20;      // Minimum preview size (% of viewport)
+const MAX_SIZE = 100;     // Maximum preview size (% of viewport)
+const DEFAULT_SIZE = 80;  // Default preview size (% of viewport)
 const HOVER_DELAY = 150;  // Hover delay time (milliseconds)
 ```
 
@@ -131,7 +139,7 @@ const HOVER_DELAY = 150;  // Hover delay time (milliseconds)
 This extension only uses the following permissions:
 
 - `activeTab` - Allows running content scripts in the currently active tab
-- `storage` - Stores user's per-site enable/disable preference settings
+- `storage` - Stores user's per-site enable/disable preferences and global preview size settings
 - No need to access user data or send network requests
 
 ## 🤝 Contributing
@@ -165,6 +173,15 @@ This extension is available on the Chrome Web Store. If you encounter any issues
 [MIT License](LICENSE)
 
 ## Changelog
+
+### v1.1.0
+- ✨ **New**: Customizable preview size settings with slider control (20% - 100% of viewport)
+- ✨ **New**: Manual number input for precise size control with auto-clamping
+- ✨ **New**: Real-time size adjustment with debounced saving
+- ✨ **New**: Size preferences stored globally and sync across all tabs
+- 🔧 **Technical**: Define size constants for better maintainability
+- 🔧 **Technical**: Comprehensive event handling with UI loop prevention
+- 🔧 **Technical**: Storage verification and error handling with timeout protection
 
 ### v1.0.0
 - Initial version release

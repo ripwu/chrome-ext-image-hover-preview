@@ -25,6 +25,12 @@ The extension only stores:
    - Stored locally using Chrome's storage API
    - Never transmitted or shared
 
+2. **Preview Size Settings**: Global preview size preference chosen by the user
+   - Example: `{"previewMaxSize": 80}` (80% of viewport)
+   - Stored locally using Chrome's storage API
+   - Applied across all websites
+   - Never transmitted or shared
+
 ## Permissions Usage
 
 ### activeTab Permission
@@ -33,9 +39,9 @@ The extension only stores:
 - **Data Access**: Only image elements and related DOM content for preview purposes
 
 ### storage Permission
-- **Purpose**: Save user's per-site preferences locally
+- **Purpose**: Save user's per-site preferences and global preview size settings locally
 - **Scope**: Local browser storage only
-- **Data Stored**: Only enable/disable settings per domain
+- **Data Stored**: Enable/disable settings per domain and preview size percentage (20-100%)
 
 ### Host Permissions (<all_urls>)
 - **Purpose**: Work on all websites to provide universal image preview functionality
@@ -46,7 +52,8 @@ The extension only stores:
 
 All data processing happens locally in your browser:
 - Image detection and preview generation
-- User preference storage and retrieval
+- User preference storage and retrieval (site preferences and size settings)
+- Preview size calculation and UI updates
 - No data is sent to external servers
 
 ## Third-Party Services
@@ -71,5 +78,5 @@ We will update this privacy policy if needed. Changes will be posted on the GitH
 
 ---
 
-**Version**: 1.0.0  
+**Version**: 1.1.0
 **Effective Date**: January 2025

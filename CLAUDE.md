@@ -13,8 +13,8 @@ This is a Chrome browser extension that provides image hover preview functionali
 - **manifest.json**: Chrome extension manifest (v3) defining permissions, content scripts, popup, and resources
 - **content/content.js**: Main extension logic implementing image hover detection and preview functionality
 - **content/content.css**: Styling for the preview overlay with dark mode support
-- **popup/popup.html**: Extension popup interface for per-site toggle control
-- **popup/popup.js**: Popup functionality handling user preferences and Chrome storage
+- **popup/popup.html**: Extension popup interface for per-site toggle control and preview size settings
+- **popup/popup.js**: Popup functionality handling user preferences, size settings, and Chrome storage
 - **icons/**: Directory containing extension icons (16x16, 48x48, 128x128 pixels)
 
 ### Key Functionality
@@ -22,11 +22,13 @@ This is a Chrome browser extension that provides image hover preview functionali
 The extension works by:
 1. Injecting content script into all web pages (`<all_urls>`)
 2. Providing a popup interface for users to enable/disable functionality per website
-3. Monitoring mouse events (`mouseover`, `mouseout`, `mousemove`) on image elements
-4. Creating a fixed-position overlay for image previews
-5. Handling various image source formats (lazy-loaded images, background images, relative URLs)
-6. Calculating optimal positioning to keep previews within viewport boundaries
-7. Storing user preferences per domain using Chrome storage API
+3. Offering customizable preview size settings (20% - 100% of viewport) with slider and manual input
+4. Monitoring mouse events (`mouseover`, `mouseout`, `mousemove`) on image elements
+5. Creating a fixed-position overlay for image previews with user-defined size constraints
+6. Handling various image source formats (lazy-loaded images, background images, relative URLs)
+7. Calculating optimal positioning to keep previews within viewport boundaries using custom size ratios
+8. Storing user preferences per domain and global size settings using Chrome storage API
+9. Real-time synchronization between popup settings and content script behavior
 
 ### Image Source Detection
 
@@ -41,10 +43,13 @@ The extension handles multiple image source scenarios:
 
 - Uses MutationObserver to handle dynamically added content
 - Implements hover delay (150ms) to prevent accidental triggers
-- Calculates preview positioning based on mouse coordinates and viewport bounds
+- Calculates preview positioning based on mouse coordinates, viewport bounds, and custom size settings
 - Provides loading states and error handling for image loading
 - Per-domain enable/disable functionality with Chrome storage persistence
+- Global preview size settings with real-time updates and storage persistence
 - Runtime messaging between popup and content scripts for real-time updates
+- Auto-clamping of size input values to valid range (20-100%)
+- Debounced saving for smooth user experience during size adjustments
 - Intelligent image size checking to avoid unnecessary previews for already large images
 - Includes extensive console logging for debugging
 
@@ -65,13 +70,27 @@ This is a vanilla JavaScript Chrome extension with no build system, package.json
 
 ### Key Files for Modification
 
-- **content/content.js:48-91**: `getImageSrc()` function - handles image source detection and URL resolution
-- **content/content.js:93-118**: `calculatePosition()` function - manages preview positioning logic
-- **content/content.js:147-213**: `showPreview()` function - core preview display logic with domain checking
-- **content/content.js:319-329**: `isValidImageElement()` function - determines which elements should trigger previews
+**Content Script Core Logic**:
+- **content/content.js:9**: `previewMaxSize` variable - stores current size setting (default 80%)
+- **content/content.js:12-25**: `checkIfEnabled()` function - loads both site preferences and size settings from storage
+- **content/content.js:39-49**: Size update message handler - receives size changes from popup
+- **content/content.js:136-143**: `calculatePosition()` function - uses `previewMaxSize` to calculate preview bounds
+- **content/content.js:getImageSrc()**: Image source detection and URL resolution
+- **content/content.js:showPreview()**: Core preview display logic with domain checking
+- **content/content.js:isValidImageElement()**: Determines which elements should trigger previews
+
+**Popup Interface**:
+- **popup/popup.html:184-199**: Size settings UI with slider and input controls
+- **popup/popup.js:10-12**: Size configuration constants (MIN_SIZE, MAX_SIZE, DEFAULT_SIZE)
+- **popup/popup.js:189-208**: `clampSize()` function - validates and corrects input values
+- **popup/popup.js:225-270**: `saveSizeSetting()` function - handles storage and content script messaging
+- **popup/popup.js:77-162**: Event handlers for slider and manual input with debouncing
+
+**Styling**:
 - **content/content.css:43-57**: Dark mode styles using `prefers-color-scheme`
-- **popup/popup.html**: UI structure for the extension popup interface
-- **popup/popup.js**: Popup logic for toggle functionality and storage management
+- **popup/popup.html:97-162**: Size control styling (slider, input, display elements)
+
+**Configuration**:
 - **icons/**: Replace placeholder PNG files with actual extension icons
 
 ## Directory Structure
