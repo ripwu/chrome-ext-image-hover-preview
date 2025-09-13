@@ -6,17 +6,21 @@
     let hoverTimer = null;
     const HOVER_DELAY = 150;
     let isExtensionEnabled = true; // Whether extension is enabled for current domain
+    let previewMaxSize = 80; // Maximum preview size as percentage of viewport (default 80%)
     
-    // Check if current domain is disabled
+    // Check if current domain is disabled and load size settings
     async function checkIfEnabled() {
         try {
             const hostname = window.location.hostname;
-            const result = await chrome.storage.local.get([`disabled_${hostname}`]);
+            const result = await chrome.storage.local.get([`disabled_${hostname}`, 'previewMaxSize']);
             isExtensionEnabled = !result[`disabled_${hostname}`];
+            previewMaxSize = result['previewMaxSize'] || 80;
             console.log('ImageHover: Extension enabled status for', hostname, ':', isExtensionEnabled);
+            console.log('ImageHover: Preview max size:', previewMaxSize + '%');
         } catch (error) {
             console.log('ImageHover: Could not check storage, defaulting to enabled');
             isExtensionEnabled = true;
+            previewMaxSize = 80;
         }
     }
     
@@ -28,6 +32,16 @@
             
             // If disabled, hide current preview
             if (!isExtensionEnabled) {
+                hidePreview();
+            }
+            
+            sendResponse({ success: true });
+        } else if (request.action === 'updateSize') {
+            previewMaxSize = request.maxSize;
+            console.log('ImageHover: Updated preview max size to:', previewMaxSize + '%');
+            
+            // If there's an active preview, hide it so the new size will apply on next hover
+            if (overlay) {
                 hidePreview();
             }
             
@@ -123,8 +137,10 @@
         const viewportWidth = window.innerWidth;
         const viewportHeight = window.innerHeight;
         
-        const maxWidth = Math.min(imageWidth, viewportWidth * 0.8);
-        const maxHeight = Math.min(imageHeight, viewportHeight * 0.8);
+        // Use custom preview max size setting
+        const sizeRatio = previewMaxSize / 100;
+        const maxWidth = Math.min(imageWidth, viewportWidth * sizeRatio);
+        const maxHeight = Math.min(imageHeight, viewportHeight * sizeRatio);
         
         // For fixed positioning, use viewport coordinates directly, no need to add scroll offset
         let left = mouseX + 15;
